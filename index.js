@@ -16,13 +16,13 @@ const animate = () => {
   const color = `hsl(${degrees}, 100%, 50%)`;
   const variation = Math.sin(Date.now() / 1000);
   const position = `0 ${1.5 + variation} -2`;
-  // const rotation = `-90 0 ${degrees}`;
+  const rotation = `-90 0 ${degrees}`;
 
   sphere.setAttribute('color', color);
   sphere.setAttribute('position', position);
 
-  plane.setAttribute('color', color);
-  plane.setAttribute('rotation', rotation);
+  // plane.setAttribute('color', color);
+  // plane.setAttribute('rotation', rotation);
 
   requestAnimationFrame(animate);
 };
