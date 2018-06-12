@@ -1,9 +1,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/0.5.0/aframe.min.js"></script>
+<script src="aframe-particle-system-component.min.js"></script>
 
-<a-scene background="color: black">
+<a-scene>
   <a-sphere></a-sphere>
   <a-sky color="black"></a-sky>
-  <a-plane width="20" height="20" position="0 0 -2.5" color="#111111"></a-plane>
+  <a-entity position="0 2.25 -15" particle-system="preset: dust; particleCount: 10000"></a-entity>
+  <!-- <a-plane width="20" height="20" position="0 0 -2.5" color="#111111"></a-plane> -->
 </a-scene>
 
 <script src="index.js"></script>
