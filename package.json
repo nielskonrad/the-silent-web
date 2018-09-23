@@ -33,5 +33,7 @@
     "gulp-uglify": "^3.0.1",
     "postcss-assets": "^5.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "aframe-particle-system-component": "^1.0.11"
+  }
 }

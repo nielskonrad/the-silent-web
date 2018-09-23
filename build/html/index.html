@@ -6,15 +6,16 @@
 	<!-- Behavioral Meta Data -->
 	<meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/0.5.0/aframe.min.js"></script>
+  <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
+  <script src="https://unpkg.com/aframe-particle-system-component@1.0.x/dist/aframe-particle-system-component.min.js"></script>
 	<!-- Styles -->
 	<link rel="stylesheet" type="text/css" href="./css/style.css"/>
 </head>
-<!-- <script src="../js/aframe-particle-system-component.min.js"></script> -->
 <body>
   <div>
-    <div id="play"></div>
-    <div id="stop"></div>
+    <div id="play" class="play"></div>
+    <div id="stop" class="stop"></div>
+    <div id="boombox" class="boombox"></div>
   </div>
 
   <a-scene>
@@ -24,6 +25,38 @@
     <!-- <a-plane width="20" height="20" position="0 0 -2.5" color="#111111"></a-plane> -->
   </a-scene>
 
+<script>
+  /*
+    * Debug parameters.
+    */
+  WebVRConfig = {
+    /**
+     * webvr-polyfill configuration
+     */
+  
+    // Forces availability of VR mode.
+    FORCE_ENABLE_VR: true, // Default: false.
+    // Complementary filter coefficient. 0 for accelerometer, 1 for gyro.
+    //K_FILTER: 0.98, // Default: 0.98.
+    // How far into the future to predict during fast motion.
+    //PREDICTION_TIME_S: 0.040, // Default: 0.040 (in seconds).
+    // Flag to disable touch panner. In case you have your own touch controls
+    //TOUCH_PANNER_DISABLED: true, // Default: false.
+    // Enable yaw panning only, disabling roll and pitch. This can be useful for
+    // panoramas with nothing interesting above or below.
+    //YAW_ONLY: true, // Default: false.
+  
+    /**
+     * webvr-boilerplate configuration
+     */
+    // Forces distortion in VR mode.
+    //FORCE_DISTORTION: true, // Default: false.
+    // Override the distortion background color.
+    //DISTORTION_BGCOLOR: {x: 1, y: 0, z: 0, w: 1}, // Default: (0,0,0,1).
+    // Prevent distortion from happening.
+    //PREVENT_DISTORTION: true, // Default: false.
+  };
+</script>
 <script src="../js/main.js" charset="utf-8"></script>
 <!-- <script src="../js/index.js"></script> -->
 <!-- <script src="../js/audio.js"></script> -->
