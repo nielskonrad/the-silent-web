@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>The Silent Web | A place to disappear</title>
+	<!-- Behavioral Meta Data -->
+	<meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/0.5.0/aframe.min.js"></script>
+	<!-- Styles -->
+	<link rel="stylesheet" type="text/css" href="./css/style.css"/>
+</head>
+<!-- <script src="../js/aframe-particle-system-component.min.js"></script> -->
+<body>
+  <div>
+    <div id="play"></div>
+    <div id="stop"></div>
+  </div>
+
+  <a-scene>
+    <a-sphere></a-sphere>
+    <a-sky color="black"></a-sky>
+    <a-entity position="0 2.25 -15" particle-system="preset: dust; particleCount: 10000"></a-entity>
+    <!-- <a-plane width="20" height="20" position="0 0 -2.5" color="#111111"></a-plane> -->
+  </a-scene>
+
+<script src="../js/main.js" charset="utf-8"></script>
+<!-- <script src="../js/index.js"></script> -->
+<!-- <script src="../js/audio.js"></script> -->
+
+</body>
+</html>
