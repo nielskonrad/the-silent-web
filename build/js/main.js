@@ -370,6 +370,41 @@ panner.coneInnerAngle = 360;
 panner.coneOuterAngle = 0;
 panner.coneOuterGain = 0;
 
+// Get sphere position
+var sphereElem = document.querySelector('a-sphere');
+var cameraElem = document.querySelector('#camera');
+var camElem = document.querySelector("[camera]").getObject3D('camera')
+
+function logSpherePosition () {
+  var spherePos = sphereElem.getAttribute('position');
+  var cameraPos = cameraElem.getAttribute('position');
+  var cameraRot = cameraElem.getAttribute('rotation');
+  if (panner.positionX) {
+    panner.positionX.value = spherePos.x;
+    panner.positionY.value = spherePos.y;
+    panner.positionZ.value = spherePos.z;
+  }
+  // if (panner.orientationX) {
+  //   panner.orientationX.value = 1;
+  //   panner.orientationY.value = 0;
+  //   panner.orientationZ.value = 0;
+  // }
+  if (listener.positionX) {
+    listener.positionX.value = cameraPos.x;
+    listener.positionY.value = cameraPos.y;
+    listener.positionZ.value = cameraPos.z;
+  }
+  listener.setOrientation(cameraRot.x, cameraRot.y, cameraRot.z, camElem.up.x, camElem.up.y, camElem.up.z);
+  // listener.forwardX.setValueAtTime(cameraRot.x, audioCtx.currentTime);
+  // listener.forwardY.setValueAtTime(cameraRot.y, audioCtx.currentTime);
+  // listener.forwardZ.setValueAtTime(cameraRot.z, audioCtx.currentTime);
+  // console.log(cameraPos);
+  // console.log(document.querySelector("[camera]").getObject3D('camera').up.x);
+  window.requestAnimationFrame(logSpherePosition);  
+}
+
+window.requestAnimationFrame(logSpherePosition);
+
 if(panner.orientationX) {
   panner.orientationX.value = 1;
   panner.orientationY.value = 0;
@@ -380,7 +415,7 @@ if(panner.orientationX) {
 
 var listener = audioCtx.listener;
 
-if(listener.forwardX) {
+if (listener.forwardX) {
   listener.forwardX.value = 0;
   listener.forwardY.value = 0;
   listener.forwardZ.value = -1;
@@ -420,38 +455,6 @@ function getData() {
 
 getData();
 source.start(0);
-
-// Get sphere position
-var sphereElem = document.querySelector('a-sphere');
-var cameraElem = document.querySelector('#camera');
-
-function logSpherePosition () {
-  var spherePos = sphereElem.getAttribute('position');
-  var cameraPos = cameraElem.getAttribute('position');
-  var cameraRot = cameraElem.getAttribute('position');
-  if(panner.positionX) {
-    panner.positionX.value = spherePos.x;
-    panner.positionY.value = spherePos.y;
-    panner.positionZ.value = spherePos.z;
-  } else {
-    panner.setPosition(xPos,yPos,zPos);
-  }
-  if(listener.positionX) {
-    listener.positionX.value = cameraPos.x;
-    listener.positionY.value = cameraPos.y;
-    listener.positionZ.value = cameraPos.z;
-  } else {
-    listener.setPosition(0,0,0);
-  }
-  listener.setOrientation(cameraRot.x, cameraRot.y, cameraRot.z, 0, 1, 0);
-  // listener.forwardX.setValueAtTime(cameraRot.x, audioCtx.currentTime);
-  // listener.forwardY.setValueAtTime(cameraRot.y, audioCtx.currentTime);
-  // listener.forwardZ.setValueAtTime(cameraRot.z, audioCtx.currentTime);
-  // console.log(cameraPos);
-  window.requestAnimationFrame(logSpherePosition);  
-}
-
-window.requestAnimationFrame(logSpherePosition);
 
 // var sound_started = false;
 
