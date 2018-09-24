@@ -358,32 +358,92 @@ THREE.VREffect = function ( renderer, onError ) {
 // define variables
 
 var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-var source;
+var analyser = audioCtx.createAnalyser();
+analyser.fftSize = 256;
+var bufferLength = analyser.frequencyBinCount;
+// console.log(bufferLength);
+var dataArray = new Uint8Array(bufferLength);
 
-var panner = audioCtx.createPanner();
-panner.panningModel = 'HRTF';
-panner.distanceModel = 'inverse';
-panner.refDistance = 1;
-panner.maxDistance = 10000;
-panner.rolloffFactor = 1;
-panner.coneInnerAngle = 360;
-panner.coneOuterAngle = 0;
-panner.coneOuterGain = 0;
+var sources = [];
+var panners = [];
+
+panners[0] = createPanner();
+panners[1] = createPanner();
+
+var canvas = document.getElementById('canvas');
+var canvasCtx = canvas.getContext('2d');
+var canvasW = canvas.width;
+var canvasH = canvas.height;
+var beatBallRadius = 0;
+
+function drawGraph() {
+  var fbc_array, bar_x, bar_width, bar_height, graphFill = '#000';
+  var canvasWidth = canvas.width;
+  var canvasHeight = canvas.height;
+  analyser.fftSize = 64;
+  var bufferLength = analyser.frequencyBinCount,
+      dataArray = new Uint8Array(bufferLength);
+  analyser.minDecibels = -90;
+  analyser.maxDecibels = -10;
+  analyser.smoothingTimeConstant = 0.90;
+  window.requestAnimationFrame(drawGraph);
+  analyser.getByteFrequencyData(dataArray);
+  canvasCtx.fillStyle = 'hsla(0, 0%, 100%, 0)';
+  canvasCtx.fillStyle = graphFill;
+  canvasCtx.fillRect(0, 0, canvasWidth, canvasHeight);
+  var barWidth = (canvasWidth / bufferLength);
+  var barHeight;
+  var x = 0;
+  // Set size of Sphere
+  beatBallRadius = dataArray[0]
+  for (var i = 0; i < bufferLength; i++) { // used to be bufferLength
+    barHeight = dataArray[i];
+    canvasCtx.fillStyle = '#999'; // 'rgb(' + (barHeight+100) + ',50,50)'
+    canvasCtx.fillRect(x, canvasHeight-barHeight/2, barWidth, barHeight/2);
+    x += barWidth + 2;
+  }
+}
+
+drawGraph();
+
+function createPanner() {
+  var panner = audioCtx.createPanner();
+  panner.panningModel = 'HRTF';
+  panner.distanceModel = 'inverse';
+  panner.refDistance = 1;
+  panner.maxDistance = 10000;
+  panner.rolloffFactor = 1;
+  panner.coneInnerAngle = 360;
+  panner.coneOuterAngle = 0;
+  panner.coneOuterGain = 0;
+  panner.connect(audioCtx.destination);
+  return panner;
+}
+
+// analyser.connect(audioCtx.destination);
 
 // Get sphere position
 var sphereElem = document.querySelector('a-sphere');
+// var sphereElem = document.querySelector('a-sphere');
 var cameraElem = document.querySelector('#camera');
 var camElem = document.querySelector("[camera]").getObject3D('camera')
 
 function logSpherePosition () {
   var spherePos = sphereElem.getAttribute('position');
+  var beatBallPos = beatBall.getAttribute('position');
   var cameraPos = cameraElem.getAttribute('position');
   var cameraRot = cameraElem.getAttribute('rotation');
-  if (panner.positionX) {
-    panner.positionX.value = spherePos.x;
-    panner.positionY.value = spherePos.y;
-    panner.positionZ.value = spherePos.z;
+  if (panners[0].positionX) {
+    panners[0].positionX.value = spherePos.x;
+    panners[0].positionY.value = spherePos.y;
+    panners[0].positionZ.value = spherePos.z;
   }
+  if (panners[1].positionX) {
+    panners[1].positionX.value = spherePos.x;
+    panners[1].positionY.value = spherePos.y;
+    panners[1].positionZ.value = spherePos.z;
+  }
+  console.log(beatBall);
   // if (panner.orientationX) {
   //   panner.orientationX.value = 1;
   //   panner.orientationY.value = 0;
@@ -405,56 +465,69 @@ function logSpherePosition () {
 
 window.requestAnimationFrame(logSpherePosition);
 
-if(panner.orientationX) {
-  panner.orientationX.value = 1;
-  panner.orientationY.value = 0;
-  panner.orientationZ.value = 0;
-} else {
-  panner.setOrientation(1,0,0);
-}
+// if(panner.orientationX) {
+//   panner.orientationX.value = 1;
+//   panner.orientationY.value = 0;
+//   panner.orientationZ.value = 0;
+// } else {
+//   panner.setOrientation(1,0,0);
+// }
 
 var listener = audioCtx.listener;
 
-if (listener.forwardX) {
-  listener.forwardX.value = 0;
-  listener.forwardY.value = 0;
-  listener.forwardZ.value = -1;
-  listener.upX.value = 0;
-  listener.upY.value = 1;
-  listener.upZ.value = 0;
-} else {
-  listener.setOrientation(0,0,-1,0,1,0);
-}
+// if (listener.forwardX) {
+//   listener.forwardX.value = 0;
+//   listener.forwardY.value = 0;
+//   listener.forwardZ.value = -1;
+//   listener.upX.value = 0;
+//   listener.upY.value = 1;
+//   listener.upZ.value = 0;
+// } else {
+//   listener.setOrientation(0,0,-1,0,1,0);
+// }
 
 // use XHR to load an audio track, and
 // decodeAudioData to decode it and stick it in a buffer.
 // Then we put the buffer into the source
 
-function getData() {
-  source = audioCtx.createBufferSource();
+function getData(index, src) {
+  sources[index] = audioCtx.createBufferSource();
   var request = new XMLHttpRequest();
-
   // request.open('GET', '../audio/song-12.2.1_01.mp3', true);
-  request.open('GET', '../audio/404686__johnderekbishop__ocean-crete-2.wav', true);
-
+  request.open('GET', '../audio/' + src.path, true);
   request.responseType = 'arraybuffer';
-
   request.onload = function() {
     var audioData = request.response;
     audioCtx.decodeAudioData(audioData, function(buffer) {
-        source.buffer = buffer;
-        // console.log(buffer);
-        source.connect(panner);
-        panner.connect(audioCtx.destination)
-        source.loop = true;
-      },
-      function(e){ console.log("Error with decoding audio data" + e.err); });
+      sources[index].buffer = buffer;
+      console.log(buffer);
+      if (src.name == 'beat-one') {
+        sources[index].connect(analyser);
+        sources[index].connect(panners[0]);
+      } else {
+        sources[index].connect(panners[1]);
+      }
+      // sources[index].connect(analyser);
+      // sources[index].connect(panner);
+      // panner.connect(audioCtx.destination)
+      sources[index].loop = src.isLoop;
+      sources[index].start(0);
+    },
+    function(e){ console.log("Error with decoding audio data" + e.err); });
   }
   request.send();
 }
 
-getData();
-source.start(0);
+var sounds = [
+  {name: 'blauw', path: 'tsw-1.0_blauw.wav', isLoop: false},
+  {name: 'braaaum', path: 'tsw-1.0_braaaum.wav', isLoop: true},
+  {name: 'beat-one', path: 'tsw-1.0_beat-1a.wav', isLoop: true}
+]
+
+for (var i = 0; i < sounds.length; i++) {
+  getData(i, sounds[i]);
+}
+// source.start(0);
 
 // var sound_started = false;
 
@@ -569,9 +642,20 @@ source.start(0);
 /*jshint browser: true */
 /*jshint devel: true */
 
+var easeVal = 0,
+  easing = 0.8;
+
+function easeIt(val) {
+  var targetX = val;
+  var dx = targetX - easeVal;
+  easeVal += dx * easing;
+  return easeVal;
+}
+
 const $ = (query) => document.querySelector(query);
 
 const sphere = $('a-sphere');
+const beatBall = $('#beatBall');
 const plane = $('a-plane');
 
 const shiftDegrees = (value) => (value + 1) % 360;
@@ -587,6 +671,10 @@ const animate = () => {
 
   sphere.setAttribute('color', color);
   sphere.setAttribute('position', position);
+
+  // console.log(beatBallRadius);
+  var newVal = easeIt(beatBallRadius / 100);
+  beatBall.setAttribute('radius', newVal);
 
   // plane.setAttribute('color', color);
   // plane.setAttribute('rotation', rotation);

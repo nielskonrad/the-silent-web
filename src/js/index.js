@@ -2,9 +2,20 @@
 /*jshint browser: true */
 /*jshint devel: true */
 
+var easeVal = 0,
+  easing = 0.8;
+
+function easeIt(val) {
+  var targetX = val;
+  var dx = targetX - easeVal;
+  easeVal += dx * easing;
+  return easeVal;
+}
+
 const $ = (query) => document.querySelector(query);
 
 const sphere = $('a-sphere');
+const beatBall = $('#beatBall');
 const plane = $('a-plane');
 
 const shiftDegrees = (value) => (value + 1) % 360;
@@ -20,6 +31,10 @@ const animate = () => {
 
   sphere.setAttribute('color', color);
   sphere.setAttribute('position', position);
+
+  // console.log(beatBallRadius);
+  var newVal = easeIt(beatBallRadius / 100);
+  beatBall.setAttribute('radius', newVal);
 
   // plane.setAttribute('color', color);
   // plane.setAttribute('rotation', rotation);

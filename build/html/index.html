@@ -9,9 +9,10 @@
   <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
   <script src="https://unpkg.com/aframe-particle-system-component@1.0.x/dist/aframe-particle-system-component.min.js"></script>
 	<!-- Styles -->
-	<link rel="stylesheet" type="text/css" href="./css/style.css"/>
+	<link rel="stylesheet" type="text/css" href="../css/main.css"/>
 </head>
 <body>
+  <canvas id="canvas" width="200" height="100"></canvas>
   <div>
     <div id="play" class="play"></div>
     <div id="stop" class="stop"></div>
@@ -21,6 +22,7 @@
   <a-scene>
     <a-camera id="camera" camera look-controls></a-camera>
     <a-sphere></a-sphere>
+    <a-sphere id="beatBall"></a-sphere>
     <a-sky color="black"></a-sky>
     <a-entity position="0 2.25 -15" particle-system="preset: dust; particleCount: 10000"></a-entity>
     <!-- <a-plane width="20" height="20" position="0 0 -2.5" color="#111111"></a-plane> -->
