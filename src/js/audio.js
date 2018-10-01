@@ -63,12 +63,55 @@ function createPanner() {
   return panner;
 }
 
-// analyser.connect(audioCtx.destination);
-
 // Get sphere position
 var sphereElem = document.querySelector('a-sphere');
 // var sphereElem = document.querySelector('a-sphere');
 var cameraElem = document.querySelector('#camera');
+// cameraElem.object3D.updateMatrixWorld();
+// camP = new THREE.Vector3();
+// setTimeout(function () {
+//   camP.setFromMatrixPosition(cameraElem.matrixWorld);
+// }, 4000)
+
+var sceneEl;
+
+AFRAME.registerComponent('master-scene', {
+  init: function () {
+    sceneEl = this.el;
+    console.log(sceneEl);
+  },
+  testSomethin: function () {
+    console.log('hey');
+  }
+});
+
+// var pairObjectAndSound = function () {
+//   // create an AudioListener and add it to the camera
+//   var listener = new THREE.AudioListener();
+//   camera.add( listener );
+
+//   // create the PositionalAudio object (passing in the listener)
+//   var sound = new THREE.PositionalAudio( listener );
+
+//   // load a sound and set it as the PositionalAudio object's buffer
+//   var audioLoader = new THREE.AudioLoader();
+//   audioLoader.load( '../audio/tsw-1.0_beat-1a.wav', function( buffer ) {
+//     sound.setBuffer( buffer );
+//     sound.setRefDistance( 20 );
+//     sound.play();
+//   });
+
+//   // create an object for the sound to play from
+//   var sphere = new THREE.SphereGeometry( 20, 32, 16 );
+//   var material = new THREE.MeshPhongMaterial( { color: 0xff2200 } );
+//   var mesh = new THREE.Mesh( sphere, material );
+//   sceneEl.add( mesh );
+
+//   // finally add the sound to the mesh
+//   mesh.add( sound );
+// }
+// pairObjectAndSound();
+
 var camElem = document.querySelector("[camera]").getObject3D('camera')
 
 function logSpherePosition () {
@@ -86,7 +129,12 @@ function logSpherePosition () {
     panners[1].positionY.value = spherePos.y;
     panners[1].positionZ.value = spherePos.z;
   }
-  console.log(beatBall);
+  sphereElem.object3D.updateMatrixWorld();
+  var pos = new THREE.Vector3();
+  var rot = new THREE.Quaternion();
+  var scale = new THREE.Vector3();
+  // sphereElem.matrixWorld.decompose(pos, rot, scale);
+  // console.log(pos);
   // if (panner.orientationX) {
   //   panner.orientationX.value = 1;
   //   panner.orientationY.value = 0;
@@ -146,7 +194,7 @@ function getData(index, src) {
       console.log(buffer);
       if (src.name == 'beat-one') {
         sources[index].connect(analyser);
-        sources[index].connect(panners[0]);
+        // sources[index].connect(panners[0]);
       } else {
         sources[index].connect(panners[1]);
       }

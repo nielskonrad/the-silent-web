@@ -19,10 +19,10 @@
     <div id="boombox" class="boombox"></div>
   </div>
 
-  <a-scene>
+  <a-scene master-scene>
     <a-camera id="camera" camera look-controls></a-camera>
-    <a-sphere></a-sphere>
-    <a-sphere id="beatBall"></a-sphere>
+    <a-sphere id=sineBall></a-sphere>
+    <a-sphere id="beatBall" sound="src: url(../audio/tsw-1.0_beat-1a.wav); autoplay: true; loop: true;"></a-sphere>
     <a-sky color="black"></a-sky>
     <a-entity position="0 2.25 -15" particle-system="preset: dust; particleCount: 10000"></a-entity>
     <!-- <a-plane width="20" height="20" position="0 0 -2.5" color="#111111"></a-plane> -->
