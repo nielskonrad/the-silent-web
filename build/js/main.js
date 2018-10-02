@@ -359,7 +359,8 @@ THREE.VREffect = function ( renderer, onError ) {
 // Create audio context and other audio nodes
 var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 var analyser = audioCtx.createAnalyser();
-analyser.fftSize = 256;
+analyser.connect(audioCtx.destination);
+// analyser.fftSize = 256;
 
 class Sound {
   constructor(name, path, loop) {
@@ -373,7 +374,8 @@ class Sound {
   createSource () {
     var source = audioCtx.createBufferSource()
     var request = new XMLHttpRequest();
-    console.log('../audio/' + this.path);
+    // console.log('../audio/' + this.path + ' vs: ' + '../audio/song-12.2.1_01.mp3');
+    // console.log(analyser);
     // request.open('GET', '../audio/song-12.2.1_01.mp3', true);
     request.open('GET', '../audio/' + this.path, true);
     request.responseType = 'arraybuffer';
@@ -386,7 +388,8 @@ class Sound {
           source.connect(analyser);
           // source.connect(panners[0]);
         } else {
-          source.connect(this.panner);
+          source.connect(audioCtx.destination);
+          // source.connect(analyser);
         }
         // sources[index].connect(analyser);
         // sources[index].connect(panner);
@@ -415,22 +418,19 @@ class Sound {
   }
 }
 
-let sounds = [
-  {name: 'blauw', path: 'tsw-1.0_blauw.wav', isLoop: false},
-  {name: 'braaaum', path: 'tsw-1.0_braaaum.wav', isLoop: true},
-  {name: 'beat-one', path: 'tsw-1.0_beat-1a.wav', isLoop: true}
-];
-
-var source = [];
+let sounds = new Array(),
+    source = [];
 
 document.addEventListener("DOMContentLoaded", function(event) {
-  console.log(sounds);
-  for (var i = 0; sounds.length; i++) {
-    var elem = sounds[i];
-    source[i] = new Sound(elem.name, elem.path, elem.isLoop);
-    console.log(source[i]);
+  sounds = [
+    {name: 'blauw', path: 'tsw-1.0_blauw.wav', isLoop: false},
+    {name: 'braaaum', path: 'tsw-1.0_braaaum.wav', isLoop: true},
+    {name: 'beat-one', path: 'tsw-1.0_beat-1a.wav', isLoop: true}
+  ];
+  // Produce sources based on sound objects
+  for (var i = 0; i < sounds.length; i++) {
+    source[i] = new Sound(sounds[i].name, sounds[i].path, sounds[i].isLoop);
   };
-  // source[0] = new Sound('blauw', 'tsw-1.0_blauw.wav', true);
 });
 
 
@@ -489,6 +489,7 @@ function drawGraph() {
     canvasCtx.fillRect(x, canvasHeight-barHeight/2, barWidth, barHeight/2);
     x += barWidth + 2;
   }
+  console.log(canvasHeight-barHeight/2);
 }
 
 drawGraph();
